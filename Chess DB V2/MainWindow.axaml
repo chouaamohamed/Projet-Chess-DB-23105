@@ -1,0 +1,87 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:ChessDB.Models"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ChessDB.MainWindow"
+        Title="PO3L - Chess Manager">
+
+    <DockPanel>
+        <TextBlock Text="Projet 2025 - Chess Manager" 
+                   FontSize="24" FontWeight="Bold" 
+                   DockPanel.Dock="Top" Margin="10" 
+                   HorizontalAlignment="Center"/>
+
+        <TabControl Margin="5">
+            
+            <TabItem Header="Gestion Joueurs">
+                <Grid ColumnDefinitions="*, 300">
+                    <DockPanel Grid.Column="0" Margin="10">
+                        <TextBlock Text="Liste des Joueurs" FontSize="18" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,10"/>
+                        <ListBox x:Name="ListeJoueurs">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:Joueur">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding Nom}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding Prenom}"/>
+                                        <TextBlock Text="{Binding Elo, StringFormat='({0} pts)'}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+
+                    <StackPanel Grid.Column="1" Background="#f0f0f0" Spacing="10" Margin="10">
+                        <TextBlock Text="Nouveau Joueur" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Nom :"/>
+                        <TextBox x:Name="InputNom" Watermark="Ex: Chouaa"/>
+                        <TextBlock Text="Prénom :"/>
+                        <TextBox x:Name="InputPrenom" Watermark="Ex: Mohamed"/>
+                        <TextBlock Text="Email :"/>
+                        <TextBox x:Name="InputEmail" Watermark="Ex : 23105@ecam.be"/>
+                        <TextBlock Text="Elo :"/>
+                        <TextBox x:Name="InputElo" Watermark="1200"/>
+                        <Button Content="Ajouter Joueur" Click="BoutonJoueur" HorizontalAlignment="Stretch" Margin="0,20,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Compétitions">
+                <Grid ColumnDefinitions="*, 300">
+                    
+                    <DockPanel Grid.Column="0" Margin="10">
+                        <TextBlock Text="Tournois en cours" FontSize="18" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,10"/>
+                        <ListBox x:Name="ListeCompetitions">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:Competition">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding ID, StringFormat='N°\{0\}'}" FontWeight="Bold" Width="50"/>
+                                        <TextBlock Text="{Binding Nom}"/>
+                                        <TextBlock Text="-" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding JoueursInscrits.Count, StringFormat='\{0\} Inscrits'}" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+
+                    <StackPanel Grid.Column="1" Background="#e6f7ff" Spacing="10" Margin="10">
+                        <TextBlock Text="Nouveau Tournoi" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="Nom du Tournoi :"/>
+                        <TextBox x:Name="InputNomTournoi" Watermark="Ex: World Chess Championship 2025"/>
+
+                        <Button Content="Créer Tournoi" 
+                                Click="BoutonCompet" 
+                                HorizontalAlignment="Stretch" 
+                                Margin="0,20,0,0"/>
+                    </StackPanel>
+                    
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+    </DockPanel>
+
+</Window>
