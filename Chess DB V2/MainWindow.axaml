@@ -121,6 +121,57 @@
                 </Grid>
             </TabItem>
 
+            <TabItem Header="Gestion Matchs">
+                <Grid ColumnDefinitions="300, *">
+                    
+                    <DockPanel Grid.Column="0" Margin="10">
+                        <TextBlock Text="Choisir un tournoi" FontSize="18" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,10"/>
+                        
+                        <ListBox x:Name="ListeCompetitionsMatchs" SelectionChanged="SelectionMatch">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:Competition">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding Nom}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding Matchs.Count, StringFormat='({0} matchs)'}" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+
+                    <Grid Grid.Column="1" x:Name="ZoneMatchs" IsVisible="False" RowDefinitions="Auto, *" Margin="10">
+                        
+                        <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,10">
+                            <TextBlock x:Name="TxtTitreMatchs" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            
+                            <Button Content="Créer / Réinitialiser les matchs" 
+                                    Click="BoutonLancerTournoi" 
+                                    HorizontalAlignment="Center"
+                                    Background="#ffcccc"/>
+                        </StackPanel>
+
+                        <ListBox Grid.Row="1" x:Name="ListeMatchs" Background="White" BorderBrush="Gray" BorderThickness="1">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:Match">
+                                    <Grid ColumnDefinitions="50, *, 30, *, 100">
+                                        <TextBlock Grid.Column="0" Text="{Binding ID, StringFormat='M{0}'}" FontWeight="Bold" Foreground="Gray" VerticalAlignment="Center"/>
+                                        
+                                        <TextBlock Grid.Column="1" Text="{Binding Joueur1.Nom}" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        
+                                        <TextBlock Grid.Column="2" Text="VS" Foreground="DarkRed" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        
+                                        <TextBlock Grid.Column="3" Text="{Binding Joueur2.Nom}" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                                        <TextBlock Grid.Column="4" Text="{Binding Resultat}" Foreground="DarkBlue" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        
+                    </Grid>
+                </Grid>
+            </TabItem>
+
         </TabControl>
     </DockPanel>
 

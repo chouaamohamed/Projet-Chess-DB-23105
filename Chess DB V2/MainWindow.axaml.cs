@@ -39,6 +39,14 @@ namespace ChessDB
             {
                 combo.ItemsSource = _gestionnaire.TousLesJoueurs;
             }
+
+            var listeCompMatchs = this.FindControl<ListBox>("ListeCompetitionsMatchs");
+
+            if (listeCompMatchs != null)
+            {
+                // On branche la même source de données que l'autre onglet
+                listeCompMatchs.ItemsSource = _gestionnaire.Competitions;
+            }
         }
 
         //fonction appelée quand on clique sur le bouton "Ajouter le joueur"
@@ -112,9 +120,10 @@ namespace ChessDB
             var listeInscrits = this.FindControl<ListBox>("ListeInscrits");
             var combo = this.FindControl<ComboBox>("ComboJoueursDispo");
             var listeComps = this.FindControl<ListBox>("ListeCompetitions");
+            var listeMatchs = this.FindControl<ListBox>("ListeMatchs");
 
             //sécurité comme d'hab
-            if (zoneGestion == null || txtTitre == null || listeInscrits == null || combo == null || listeComps == null)
+            if (zoneGestion == null || txtTitre == null || listeInscrits == null || combo == null || listeComps == null || listeMatchs == null)
             {
                 return;
             }
@@ -163,6 +172,50 @@ namespace ChessDB
                 
                 //quand on rajoute une personne, on réintialise l'item sélectionné
                 combo.SelectedItem = null;
+            }
+        }
+
+        public void SelectionMatch(object sender, SelectionChangedEventArgs e)
+        {
+            //on initialise les élements du nouvel onglet (Gestion Matchs)
+            var zone = this.FindControl<Grid>("ZoneMatchs");
+            var titre = this.FindControl<TextBlock>("TxtTitreMatchs");
+            var listeMatchs = this.FindControl<ListBox>("ListeMatchs");
+            var listeComps = this.FindControl<ListBox>("ListeCompetitionsMatchs");
+
+            if (zone == null || titre == null || listeMatchs == null || listeComps == null) return;
+
+            //comme pour SelectionTournoi on précise quelle compétition et on traite l'élément sélectionné comme s'il venait de Competition.cs
+            var tournoi = listeComps.SelectedItem as Competition;
+
+            if (tournoi == null)
+            {
+                zone.IsVisible = false; //logique, si y a pas de compétitions/qu'on ne clique pas sur un tournoi, rien ne s'affichera au niveau des matchs
+                return;
+            }
+
+            zone.IsVisible = true; //sinon on affiche
+            titre.Text = "Matchs de : " + tournoi.Nom;
+            
+            //liaison visuelle <--> partie code
+            listeMatchs.ItemsSource = tournoi.Matchs;
+        }
+
+        public void BoutonLancerTournoi(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            //on initalise à nouveau la liste de compétitions
+            var listeComps = this.FindControl<ListBox>("ListeCompetitionsMatchs");
+            
+            if (listeComps == null)
+            {
+                return;
+            }
+
+            var tournoi = listeComps.SelectedItem as Competition;
+
+            if (tournoi != null)
+            {
+                tournoi.CreerMatchs();
             }
         }
     }
