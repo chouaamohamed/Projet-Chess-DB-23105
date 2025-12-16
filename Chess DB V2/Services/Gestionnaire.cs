@@ -1,21 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using ChessDB.Models;
+using System.Collections.ObjectModel;
 
 namespace ChessDB.Services
 {
     public class Gestionnaire
     {
         //la "base de données" en mémoire
-        public List<Joueur> TousLesJoueurs { get; set; }
-        public List<Competition> Competitions { get; set; }
+        public ObservableCollection<Joueur> TousLesJoueurs { get; set; }
+        public ObservableCollection<Competition> Competitions { get; set; }
 
         private CalculateurELO _calculateur;
 
         public Gestionnaire()
         {
-            TousLesJoueurs = new List<Joueur>();
-            Competitions = new List<Competition>();
+            TousLesJoueurs = new ObservableCollection<Joueur>();
+            Competitions = new ObservableCollection<Competition>();
             _calculateur = new CalculateurELO();
         }
 

@@ -24,6 +24,7 @@ namespace ChessDB.Models
             ID = id;
             Joueur1 = j1;
             Joueur2 = j2;
+            Coups = "";
             Resultat = ResultatMatch.PasEncoreJoue; //par défaut, le match est pas joué
         }
     }

@@ -31,6 +31,14 @@ namespace ChessDB
             {
                 listeComps.ItemsSource = _gestionnaire.Competitions;
             }
+            
+            //mm chose pour la liste de joueurs (liste déroulante)
+            var combo = this.FindControl<ComboBox>("SelecteurJoueur");
+
+            if (combo != null)
+            {
+                combo.ItemsSource = _gestionnaire.TousLesJoueurs;
+            }
         }
 
         //fonction appelée quand on clique sur le bouton "Ajouter le joueur"
@@ -74,7 +82,7 @@ namespace ChessDB
             inputElo.Text = "";
         }
 
-        public void BoutonCompet(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        public void BoutonTournoi(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             var inputNomTournoi = this.FindControl<TextBox>("InputNomTournoi");
             var listeComps = this.FindControl<ListBox>("ListeCompetitions");
@@ -94,6 +102,68 @@ namespace ChessDB
 
             //réinitialisation
             inputNomTournoi.Text = "";
+        }
+
+        public void SelectionTournoi(object sender, SelectionChangedEventArgs e) //quand on clique sur un tournoi à gauche
+        {
+            //on récupère les parties visuelles
+            var zoneGestion = this.FindControl<Border>("ZoneGestion");
+            var txtTitre = this.FindControl<TextBlock>("TxtTitreTournoi");
+            var listeInscrits = this.FindControl<ListBox>("ListeInscrits");
+            var combo = this.FindControl<ComboBox>("ComboJoueursDispo");
+            var listeComps = this.FindControl<ListBox>("ListeCompetitions");
+
+            //sécurité comme d'hab
+            if (zoneGestion == null || txtTitre == null || listeInscrits == null || combo == null || listeComps == null)
+            {
+                return;
+            }
+
+            //quel tournoi a été cliqué ?
+            var tournoi = listeComps.SelectedItem as Competition; //on traite l'élement sélectionné comme un élément de Competition.cs
+
+            if (tournoi == null)
+            {
+                zoneGestion.IsVisible = false; //si rien n'est sélectionné ou ctrl + click, on cache la zone de droite
+                return;
+            }
+
+            zoneGestion.IsVisible = true; //sinon on affiche
+            
+            //on affiche les options manuellement
+
+            txtTitre.Text = tournoi.Nom; //le titre du tournoi
+
+            listeInscrits.ItemsSource = tournoi.JoueursInscrits; //la liste des joueurs inscrits pour CETTE compétition
+
+            combo.ItemsSource = _gestionnaire.TousLesJoueurs; //la liste de tous les joueurs (combo = liste déroulante en axaml)
+        }
+
+        public void BoutonInscrire(object sender, Avalonia.Interactivity.RoutedEventArgs e) //quand on clique sur le bouton inscrire
+        {
+            var listeComps = this.FindControl<ListBox>("ListeCompetitions");
+            var combo = this.FindControl<ComboBox>("ComboJoueursDispo");
+
+            if (listeComps == null || combo == null)
+            {
+                return;
+            }
+
+            //on récupère le tournoi sélectionné à gauche et le joueur sélectionné dans le combo (liste déroulante)
+            var tournoi = listeComps.SelectedItem as Competition; //considéré comme compétition
+            var joueur = combo.SelectedItem as Joueur; //considéré comme joueur
+
+            if (tournoi != null && joueur != null)
+            {
+                //on vérifie que le joueur est pas déjà inscrit
+                if (!tournoi.JoueursInscrits.Contains(joueur))
+                {
+                    tournoi.JoueursInscrits.Add(joueur);
+                }
+                
+                //quand on rajoute une personne, on réintialise l'item sélectionné
+                combo.SelectedItem = null;
+            }
         }
     }
 }
