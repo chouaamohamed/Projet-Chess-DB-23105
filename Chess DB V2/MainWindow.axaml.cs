@@ -244,23 +244,23 @@ namespace ChessDB
                 return;
             }
 
-            // On affiche la zone d'arbitrage
+            //on affiche la zone d'arbitrage
             zoneDetails.IsVisible = true;
             
-            // On remplit les infos
+            //on remplit les infos
             txtAffiche.Text = $"{match.Joueur1.Nom} VS {match.Joueur2.Nom}";
             
-            // On remet les coups existants s'ils ont déjà été notés
+            //pour ajouter les coups du match
             inputCoups.Text = match.Coups;
         }
 
         public void BoutonResultat(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            // 1. Récupérer le match sélectionné
+            //récupérer le match sélectionné
             var listeMatchs = this.FindControl<ListBox>("ListeMatchs");
             var inputCoups = this.FindControl<TextBox>("InputCoups");
             
-            // On récupère le bouton cliqué pour savoir qui a gagné (grâce au "Tag")
+            //on récupère le bouton cliqué pour savoir qui a gagné (grâce au "Tag")
             var boutonClique = sender as Avalonia.Controls.Button;
 
             if (listeMatchs == null || inputCoups == null || boutonClique == null)
@@ -272,13 +272,13 @@ namespace ChessDB
 
             if (match == null) return;
 
-            // 2. Sauvegarder les coups
+            //sauvegarder les coups
             match.Coups = inputCoups.Text ?? ""; //les ?? c'est une mesure de sécurité, si jms le inputCoups est null, on écrit "", donc au final rien
 
-            // 3. Déterminer le résultat selon le Tag du bouton (1, X, 2)
+            //déterminer le résultat selon le Tag du bouton (1, X, 2)
             string? code = boutonClique.Tag?.ToString(); //le ? dans Tag et string veut dire vérifie que Tag/string existe avant de convertir en texte
 
-            // 1. D'abord, on définit juste le résultat dans l'objet Match
+            //on définit d'abord le résultat dans l'objet Match
             if (code == "1") 
             {
                 match.Resultat = ResultatMatch.GainJoueur1;
@@ -287,32 +287,13 @@ namespace ChessDB
             {
                 match.Resultat = ResultatMatch.GainJoueur2;
             }
-            else // Nul (X ou autre)
+            else //nul
             {
                 match.Resultat = ResultatMatch.Nul;
             }
 
-            // 2. Ensuite, on lance le calcul ELO une seule fois pour tout le monde
-            // La méthode utilisera le "match.Resultat" qu'on vient juste de définir au-dessus.
+            //calcul Elo pour pouvoir le mettre à jour avec le "match.Resultat" qu'on vient de déterminer
             Services.CalculateurELO.UpdateELO(match.Joueur1, match.Joueur2, match.Resultat);
-
-            // 4. Rafraîchir l'affichage
-            // Astuce pour forcer la liste à redessiner le résultat bleu
-            listeMatchs.ItemsSource = null; 
-            // Il faut retrouver le tournoi parent... 
-            // Pour faire simple, on va juste re-sélectionner l'item pour redéclencher l'affichage
-            // Mais le plus simple ici est de laisser l'utilisateur re-cliquer ou de voir le résultat changer au prochain clic.
-            // Pour l'instant, laissons comme ça, la modification de l'objet est faite en mémoire.
-            
-            // On cache la zone pour dire "C'est fini"
-            var zoneDetails = this.FindControl<Border>("ZoneDetailsMatch");
-
-            if (zoneDetails != null)
-            {
-                zoneDetails.IsVisible = false;
-            }
-
-            listeMatchs.SelectedItem = null; // Désélectionner
         }
     }
 }
