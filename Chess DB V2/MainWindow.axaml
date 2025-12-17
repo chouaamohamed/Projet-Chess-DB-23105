@@ -25,7 +25,7 @@
                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                         <TextBlock Text="{Binding Nom}" FontWeight="Bold"/>
                                         <TextBlock Text="{Binding Prenom}"/>
-                                        <TextBlock Text="{Binding Elo, StringFormat='({0} pts)'}"/>
+                                        <TextBlock Text="{Binding Elo, StringFormat='({0} Elo)'}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -87,7 +87,9 @@
                             <StackPanel Spacing="10">
                                 <TextBlock Text="GÉRER LE TOURNOI" FontWeight="Bold"/>
                                 
-                                <TextBlock x:Name="TxtTitreTournoi" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Foreground="DarkGreen"/>
+                                <Viewbox Stretch="Uniform" StretchDirection="DownOnly" MaxHeight="80" HorizontalAlignment="Stretch">
+                                        <TextBlock x:Name="TxtTitreTournoi" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Foreground="DarkGreen"/>
+                                </Viewbox>
                                 
                                 <Separator/>
 
@@ -122,12 +124,12 @@
             </TabItem>
 
             <TabItem Header="Gestion Matchs">
-                <Grid ColumnDefinitions="300, *">
+                <Grid ColumnDefinitions="300, *, *" Margin = "10">
                     
-                    <DockPanel Grid.Column="0" Margin="10">
+                    <DockPanel Grid.Column="0" Margin="0,0,10,0">
                         <TextBlock Text="Choisir un tournoi" FontSize="18" FontWeight="Bold" DockPanel.Dock="Top" Margin="0,0,0,10"/>
                         
-                        <ListBox x:Name="ListeCompetitionsMatchs" SelectionChanged="SelectionMatch">
+                        <ListBox x:Name="ListeCompetitionsMatchs" SelectionChanged="SelectionTournoiMatch" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                             <ListBox.ItemTemplate>
                                 <DataTemplate x:DataType="models:Competition">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
@@ -139,21 +141,24 @@
                         </ListBox>
                     </DockPanel>
 
-                    <Grid Grid.Column="1" x:Name="ZoneMatchs" IsVisible="False" RowDefinitions="Auto, *" Margin="10">
+                    <Grid Grid.Column="1" x:Name="ZoneMatchs" IsVisible="False" RowDefinitions="Auto, *" Margin="10,0,10,0">
                         
                         <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,10">
-                            <TextBlock x:Name="TxtTitreMatchs" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <Viewbox Stretch="Uniform" StretchDirection="DownOnly" MaxHeight="80" HorizontalAlignment="Stretch">
+                                <TextBlock x:Name="TxtTitreMatchs" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            </Viewbox>
                             
                             <Button Content="Créer / Réinitialiser les matchs" 
                                     Click="BoutonLancerTournoi" 
-                                    HorizontalAlignment="Center"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
                                     Background="#ffcccc"/>
                         </StackPanel>
 
-                        <ListBox Grid.Row="1" x:Name="ListeMatchs" Background="White" BorderBrush="Gray" BorderThickness="1">
+                        <ListBox Grid.Row="1" x:Name="ListeMatchs" SelectionChanged="SelectionMatch" Background="White" BorderBrush="Gray" BorderThickness="1">
                             <ListBox.ItemTemplate>
                                 <DataTemplate x:DataType="models:Match">
-                                    <Grid ColumnDefinitions="50, *, 30, *, 100">
+                                    <Grid ColumnDefinitions="30, *, 40, *, 110">
                                         <TextBlock Grid.Column="0" Text="{Binding ID, StringFormat='M{0}'}" FontWeight="Bold" Foreground="Gray" VerticalAlignment="Center"/>
                                         
                                         <TextBlock Grid.Column="1" Text="{Binding Joueur1.Nom}" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
@@ -162,13 +167,40 @@
                                         
                                         <TextBlock Grid.Column="3" Text="{Binding Joueur2.Nom}" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-                                        <TextBlock Grid.Column="4" Text="{Binding Resultat}" Foreground="DarkBlue" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding ResultatAffiche}" Foreground="DarkBlue" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
                         
                     </Grid>
+                    
+                    <Border Grid.Column="2" x:Name="ZoneDetailsMatch" IsVisible="False"
+                            BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="15" Background="#f9f9f9">
+                        
+                        <StackPanel Spacing="15">
+                            <TextBlock Text="Arbitrage" FontSize="20" FontWeight="Bold" Foreground="DarkRed" HorizontalAlignment="Center"/>
+                            
+                            <TextBlock x:Name="TxtAfficheMatch" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
+                            
+                            <Separator/>
+
+                            <TextBlock Text="Feuille de match (Coups) :" Margin="0,10,0,0"/>
+                            <TextBox x:Name="InputCoups" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Watermark="Ex : 1. e4 e5 &#x0a;2. Cf3..."/>
+
+                            <Separator/>
+
+                            <TextBlock Text="Résultat final :" FontWeight="Bold" Margin="0,10,0,0"/>
+                            
+                            <Grid ColumnDefinitions="*,*,*">
+                                <Button Content="Blanc 1-0" Click="BoutonResultat" Tag="1" Grid.Column="0" Margin="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="White" BorderBrush="Gray"/>
+                                <Button Content="Nul ½-½"   Click="BoutonResultat" Tag="X" Grid.Column="1" Margin="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="LightGray"/>
+                                <Button Content="Noir 0-1"  Click="BoutonResultat" Tag="2" Grid.Column="2" Margin="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="Black" Foreground="White"/>
+                            </Grid>
+
+                        </StackPanel>
+                    </Border>
+
                 </Grid>
             </TabItem>
 

@@ -27,5 +27,26 @@ namespace ChessDB.Models
             Coups = "";
             Resultat = ResultatMatch.PasEncoreJoue; //par défaut, le match est pas joué
         }
+
+    public string ResultatAffiche //classe qui sera utile pour l'affichage des résultats dans l'ui
+    {
+        get
+        {
+            switch (Resultat)
+            {
+                case ResultatMatch.GainJoueur1:
+                    return $"{Joueur1.Nom} Vainqueur";
+                
+                case ResultatMatch.GainJoueur2:
+                    return $"{Joueur2.Nom} Vainqueur";
+                
+                case ResultatMatch.Nul:
+                    return "Match Nul";
+                
+                default: // Cas PasEncoreJoue
+                    return "En attente";
+            }
+        }
+    }
     }
 }

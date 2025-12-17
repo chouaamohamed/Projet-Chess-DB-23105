@@ -11,13 +11,10 @@ namespace ChessDB.Services
         public ObservableCollection<Joueur> TousLesJoueurs { get; set; }
         public ObservableCollection<Competition> Competitions { get; set; }
 
-        private CalculateurELO _calculateur;
-
         public Gestionnaire()
         {
             TousLesJoueurs = new ObservableCollection<Joueur>();
             Competitions = new ObservableCollection<Competition>();
-            _calculateur = new CalculateurELO();
         }
 
         //ajouter un nouveau joueur à la fédération
@@ -27,7 +24,7 @@ namespace ChessDB.Services
             //si la liste est vide, on commence à 1 (condition ? conséquence : alternative)
             int nouvelId = TousLesJoueurs.Count > 0 ? TousLesJoueurs.Max(j => j.ID) + 1 : 1;
             
-            Joueur nouveau = new Joueur(nouvelId, nom, prenom, elo, email);
+            Joueur nouveau = new Joueur(nouvelId, nom, prenom, email, elo);
             TousLesJoueurs.Add(nouveau);
         }
 
@@ -102,7 +99,7 @@ namespace ChessDB.Services
                 match.Resultat = resultat;
 
                 //on demande au calculateur de mettre à jour les ELO des joueurs
-                _calculateur.UpdateELO(match.Joueur1, match.Joueur2, resultat);
+                CalculateurELO.UpdateELO(match.Joueur1, match.Joueur2, resultat);
             }
         }
     }

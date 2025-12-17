@@ -7,7 +7,7 @@ namespace ChessDB.Services
     {
         private const int K = 20;
 
-        public void UpdateELO(Joueur J1, Joueur J2, ResultatMatch resultat)
+        public static void UpdateELO(Joueur J1, Joueur J2, ResultatMatch resultat) //le "static" permet de dire qu'on utilise cette fonction directement et qu'on a pas besoin de créer un objet "CalculateurELO" spécifique
         {
 
             double J1Attendu = 1 / (1 + Math.Pow(10, (J2.Elo - J1.Elo) / 400)); //formule pour calculer l'elo
