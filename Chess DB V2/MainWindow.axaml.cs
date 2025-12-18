@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using ChessDB.Models; //pour les joueurs
 using ChessDB.Services; //important pour trouver ton Gestionnaire
+using System.Linq;
 
 namespace ChessDB
 {
@@ -321,6 +322,41 @@ namespace ChessDB
             //on les sauvegarde DANS le match pour plus tard (pour pouvoir annuler ou reset)
             match.GainEloJ1 = pointsJ1;
             match.GainEloJ2 = pointsJ2;
+        }
+
+        public void BoutonSupprimerTournoi(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var bouton = (Avalonia.Controls.Button)sender;
+            
+            //le tournoi attaché au bouton est récupéré avec le Tag
+            var tournoiASupp = bouton.Tag as Models.Competition;
+
+            if (tournoiASupp != null)
+            {
+                //on supp le tournoi de la liste observable
+                _gestionnaire.Competitions.Remove(tournoiASupp);
+            }
+        }
+
+        public void BoutonSupprimerJoueur(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var bouton = (Avalonia.Controls.Button)sender;
+            var joueurASupp = bouton.Tag as Models.Joueur;
+
+            if (joueurASupp != null)
+            {
+                //on vérifie d'abord si le joueur en qst est inscrit dans un tournoi avant de le supp
+                bool estInscrit = _gestionnaire.Competitions.Any(c => c.JoueursInscrits.Contains(joueurASupp));
+
+                if (estInscrit)
+                {
+                    bouton.Content = "⚠️ Occupé !"; //si le joueur en qst est inscrit, on affiche juste le message "occupé", rien de plus
+                    return; 
+                }
+
+                //sinon on peut supprimer le joueur
+                _gestionnaire.TousLesJoueurs.Remove(joueurASupp);
+            }
         }
     }
 }

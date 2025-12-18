@@ -5,7 +5,7 @@
         xmlns:models="clr-namespace:ChessDB.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ChessDB.MainWindow"
-        Title="Chess Manager">
+        Title="ChessDB">
 
     <DockPanel>
         <TextBlock Text="PO3L - ChessDB" 
@@ -22,11 +22,27 @@
                         <ListBox x:Name="ListeJoueurs">
                             <ListBox.ItemTemplate>
                                 <DataTemplate x:DataType="models:Joueur">
-                                    <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <TextBlock Text="{Binding Nom}" FontWeight="Bold"/>
-                                        <TextBlock Text="{Binding Prenom}"/>
-                                        <TextBlock Text="{Binding Elo, StringFormat='({0} Elo)'}"/>
-                                    </StackPanel>
+
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Nom}" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Prenom}"/>
+                                            <TextBlock Text="{Binding Elo, StringFormat='({0} Elo)'}"/>
+                                            <TextBlock Text="{Binding Email}" FontStyle="Italic"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1"
+                                                Content="🗑"
+                                                Background="Transparent"
+                                                Foreground="Red"
+                                                BorderThickness="0"
+                                                Padding="10,5"
+                                                Tag="{Binding}" 
+                                                Click="BoutonSupprimerJoueur"/>
+                                                
+                                    </Grid>
+
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -62,10 +78,25 @@
                         <ListBox x:Name="ListeCompetitions" SelectionChanged="SelectionTournoi">
                             <ListBox.ItemTemplate>
                                 <DataTemplate x:DataType="models:Competition">
-                                    <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <TextBlock Text="{Binding ID, StringFormat='N°\{0\}'}" FontWeight="Bold" Width="40"/>
-                                        <TextBlock Text="{Binding Nom}"/>
-                                    </StackPanel>
+                                    
+                                    <Grid ColumnDefinitions="*,Auto">
+
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ID, StringFormat='N°\{0\}'}" FontWeight="Bold" Width="40"/>
+                                            <TextBlock Text="{Binding Nom}"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1" 
+                                                Content="🗑"
+                                                Background="Transparent"
+                                                Foreground="Red"
+                                                BorderThickness="0"
+                                                Padding="10,5"
+                                                Tag="{Binding}"
+                                                Click="BoutonSupprimerTournoi"/>
+
+                                    </Grid>
+
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
