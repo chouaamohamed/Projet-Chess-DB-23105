@@ -97,9 +97,6 @@ namespace ChessDB.Services
             {
                 //on enregistre le résultat dans le match (on passe de PasEncoreJoue à GainJoueur1 ou 2 ou Nul)
                 match.Resultat = resultat;
-
-                //on demande au calculateur de mettre à jour les ELO des joueurs
-                CalculateurELO.UpdateELO(match.Joueur1, match.Joueur2, resultat);
             }
         }
     }

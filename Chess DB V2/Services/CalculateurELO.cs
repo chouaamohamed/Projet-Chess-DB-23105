@@ -7,7 +7,7 @@ namespace ChessDB.Services
     {
         private const int K = 20;
 
-        public static void UpdateELO(Joueur J1, Joueur J2, ResultatMatch resultat) //le "static" permet de dire qu'on utilise cette fonction directement et qu'on a pas besoin de créer un objet "CalculateurELO" spécifique
+        public static void UpdateELO(Joueur J1, Joueur J2, ResultatMatch resultat, out int gainJ1, out int gainJ2) //le "static" permet de dire qu'on utilise cette fonction directement et qu'on a pas besoin de créer un objet "CalculateurELO" spécifique
         {
 
             double J1Attendu = 1 / (1 + Math.Pow(10, (J2.Elo - J1.Elo) / 400)); //formule pour calculer l'elo
@@ -23,14 +23,14 @@ namespace ChessDB.Services
             double scoreReelJ2 = 1 - scoreReelJ1;
 
             //calcul des nv scores
-            //nouveau = ancien + K * (réalité - score attendu)
-            int nouveauEloJ1 = (int)(J1.Elo + K * (scoreReelJ1 - J1Attendu));
-            int nouveauEloJ2 = (int)(J2.Elo + K * (scoreReelJ2 - J2Attendu));
+            //calcul gain (arrondi) = K * (réalité - score attendu)
+            gainJ1 = (int)Math.Round(K * (scoreReelJ1 - J1Attendu), MidpointRounding.AwayFromZero);
+            gainJ2 = (int)Math.Round(K * (scoreReelJ2 - J2Attendu), MidpointRounding.AwayFromZero);
 
             //on met à jour les elos
-            J1.Elo = nouveauEloJ1;
-            J2.Elo = nouveauEloJ2;
-            //on fait des int nouveauElo car si on disait que J1.Elo = calcul alors J2.Elo prendrait en compte dans la ligne suivante le nv J1.Elo dans son calcul, ce qui fausserait sa valeur
+            J1.Elo += gainJ1;
+            J2.Elo += gainJ2;
+            //on sépare gainJ1 de J1.Elo car si on disait que J1.Elo += calcul gain alors J2.Elo prendrait en compte dans la ligne suivante le nv J1.Elo dans son calcul, ce qui fausserait sa valeur
         }
     }
 }

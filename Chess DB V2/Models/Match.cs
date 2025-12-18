@@ -22,6 +22,9 @@ namespace ChessDB.Models
         
         private ResultatMatch _resultat;
 
+        public int GainEloJ1 { get; set; } = 0;
+        public int GainEloJ2 { get; set; } = 0;
+
         public ResultatMatch Resultat
         {
             get { return _resultat; }

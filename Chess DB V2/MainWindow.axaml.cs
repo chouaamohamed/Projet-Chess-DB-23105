@@ -219,7 +219,18 @@ namespace ChessDB
             var tournoi = listeComps.SelectedItem as Competition;
 
             if (tournoi != null)
-            {
+            {               
+                //on parcourt tous les matchs existants pour annuler leur impact précis (logique pour reset l'elo avec une différence de gain)
+                foreach (var vieuxMatch in tournoi.Matchs)
+                {
+                    if (vieuxMatch.Resultat != ResultatMatch.PasEncoreJoue)
+                    {
+                        //on inverse exactement ce que le match sélectionné avait fait (on va le faire pour tt les matchs)
+                        vieuxMatch.Joueur1.Elo -= vieuxMatch.GainEloJ1;
+                        vieuxMatch.Joueur2.Elo -= vieuxMatch.GainEloJ2;
+                    }
+                }
+
                 tournoi.CreerMatchs();
             }
         }
@@ -275,6 +286,17 @@ namespace ChessDB
             //sauvegarder les coups
             match.Coups = inputCoups.Text ?? ""; //les ?? c'est une mesure de sécurité, si jms le inputCoups est null, on écrit "", donc au final rien
 
+            //si le match avait déjà été joué on annule les points exacts qu'il est censé donné
+            if (match.Resultat != ResultatMatch.PasEncoreJoue)
+            {
+                match.Joueur1.Elo -= match.GainEloJ1; //on enlève ce qu'on avait ajouté
+                match.Joueur2.Elo -= match.GainEloJ2;
+                
+                //+ on remet les compteurs du match à zéro par sécurité
+                match.GainEloJ1 = 0;
+                match.GainEloJ2 = 0;
+            }
+
             //déterminer le résultat selon le Tag du bouton (1, X, 2)
             string? code = boutonClique.Tag?.ToString(); //le ? dans Tag et string veut dire vérifie que Tag/string existe avant de convertir en texte
 
@@ -293,7 +315,12 @@ namespace ChessDB
             }
 
             //calcul Elo pour pouvoir le mettre à jour avec le "match.Resultat" qu'on vient de déterminer
-            Services.CalculateurELO.UpdateELO(match.Joueur1, match.Joueur2, match.Resultat);
+            int pointsJ1, pointsJ2;
+            Services.CalculateurELO.UpdateELO(match.Joueur1, match.Joueur2, match.Resultat, out pointsJ1, out pointsJ2);
+
+            //on les sauvegarde DANS le match pour plus tard (pour pouvoir annuler ou reset)
+            match.GainEloJ1 = pointsJ1;
+            match.GainEloJ2 = pointsJ2;
         }
     }
 }
