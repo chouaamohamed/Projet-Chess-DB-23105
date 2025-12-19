@@ -391,7 +391,7 @@ namespace ChessDB
 
                 if (estInscrit)
                 {
-                    bouton.Content = "⚠️ Occupé !"; //si le joueur en qst est inscrit, on affiche juste le message "occupé", rien de plus
+                    bouton.Content = "⚠️ En Tournoi !"; //si le joueur en qst est inscrit, on affiche juste le message "occupé", rien de plus
                     return; 
                 }
 
@@ -449,6 +449,34 @@ namespace ChessDB
         {
             //qd on détecte que la fenêtre ferme, on active la fonction sauvegarde
             Services.Sauvegarde.Sauvegarder(_gestionnaire);
+        }
+
+        public void RechercherJoueur(object sender, Avalonia.Input.KeyEventArgs e) //fonction utilisée avec KeyUp dans l'axaml pour qu'elle puisse fonctionner à chaque fois qu'on appuie sur le clavier
+        {
+            var textBox = (Avalonia.Controls.TextBox)sender;
+            string texte = textBox.Text ?? ""; //on récupère le texte (ou vide si null)
+
+            var liste = this.FindControl<ListBox>("ListeJoueurs");
+            if (liste == null)
+            {
+                return;
+            }
+
+            //si la recherche est vide, on remet tout le monde
+            if (string.IsNullOrWhiteSpace(texte))
+            {
+                liste.ItemsSource = _gestionnaire.TousLesJoueurs;
+            }
+            else
+            {
+                // SINON : On filtre !
+                //sinon on commence à filtrer
+                var resultatFiltre = _gestionnaire.TousLesJoueurs
+                    .Where(j => j.Nom.ToLower().Contains(texte.ToLower()) || j.Prenom.ToLower().Contains(texte.ToLower())) //on fait en sorte de chercher dans le texte qu'on a mis si il correspond à un prénom/nom (on recherche tout en minuscule pour pas poser conflit)
+                    .ToList();
+
+                liste.ItemsSource = resultatFiltre; //on remplace la liste du axaml par le résultat filtré
+            }
         }
     }
 }

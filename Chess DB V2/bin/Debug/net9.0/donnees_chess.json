@@ -1,0 +1,11 @@
+{
+  "$id": "1",
+  "TousLesJoueurs": {
+    "$id": "2",
+    "$values": []
+  },
+  "Competitions": {
+    "$id": "3",
+    "$values": []
+  }
+}
