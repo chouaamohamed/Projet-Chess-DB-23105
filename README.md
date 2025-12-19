@@ -13,6 +13,7 @@ ChessDB est capable :
 La fonctionnalité supplémentaire de ChessDB est de pouvoir rechercher les joueurs inscrits sur l'applications de manière dynamique.
 En tapant le nom/prénom de l'utilisateur que vous recherchez, la liste de joueurs se met à jour dès que vous appuyez sur votre clavier grâce à l'événement KeyUp d'Avalonia (en supplément de la méthode .Where(...) en LINQ qui filtrent les données directement en mémoire et non depuis le disque).
 Méthode de recherche pratique par rapport à un simple bouton statique "Valider".
+
 ![Enregistrement 2025-12-19 221402](https://github.com/user-attachments/assets/7d0a97c9-706b-4924-9660-f8a979fdc8da)
 
 ## Diagramme de classes :
@@ -231,9 +232,11 @@ flowchart TD
 ChessDB est facilement modulable à d'autres fédérations sportives tels que le tennis, le football, la boxe, etc. :
 
 - De part son système de calcul de points (CalculateurELO.cs). Radicalement différent d'un sport à un autre, toute la logique du calcul de points d'échecs se trouve dans ce fichier. Ce qui veut dire que celui-ci peut être aisément modifié indépendamment du reste du code pour convenir à un autre sport.
+  
 - D'autre part sa structure des modèles de données commune à d'autres sports (Joueur, Match, Competition).
   - La classe Joueur par exemple contient les informations génériques d'un joueur en compétition (même Elo peut être considéré comme commun à d'autres sports étant donné qu'il s'agit uniquement d'un score de référence).
   - De plus la classe Match possède une propriété Coups qui est simplement un input en string : utilisé dans notre cas pour noter les coups des joueurs, il reste universel et peut être utilisé par exemple pour un Scrabble en notant le nombre de mots posés. Ou encore sa propriété RésultatMatch qui est lui aussi universel aux sports d'opposition (soit le Joueur1 gagne, soit le Joueur2, soit match nul).
+    
 - Et finalement par son système de sauvegarde qui n'enregistre pas manuellement des propriétés précises aux échecs mais plutôt sérialise l'objet Gestionnaire ainsi que ses références. Ce qui signifie que si l'on souhaite changer de sport et rajouter une catégorie poids (pour le MMA par exemple), le système de sauvegarde l'inculera dans son processus sans avoir besoin de modifier son code.
 
 ## Principes SOLID utilisés :
