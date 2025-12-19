@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using ChessDB.Models; //pour les joueurs
-using ChessDB.Services; //important pour trouver ton Gestionnaire
-using System.Linq;
+using ChessDB.Services; //important pour trouver le Gestionnaire
+using System.Linq; //pour utiliser le .Any() dans la fct BoutonSupprimerJoueur
 
 namespace ChessDB
 {
@@ -9,6 +9,10 @@ namespace ChessDB
     {
         //on stocke le gestionnaire ici pour que la fenêtre puisse l'utiliser
         private Gestionnaire _gestionnaire;
+
+        //si le joueur/tournoi est vide, cela veut dire qu'on va créer un nouveau joueur/tournoi
+        private Models.Joueur? _joueurEnEdition = null; //c'est pour ça qu'on a = null mais c'est juste une mesure de sécurité pour VSC
+        private Models.Competition? _tournoiEnEdition = null;
 
         public MainWindow()
         {
@@ -78,11 +82,35 @@ namespace ChessDB
             }
 
             string email = inputEmail.Text ?? ""; //si inputEmail.Text est nul, mettre "" à la place
-            
-            _gestionnaire.AjouterJoueur(inputNom.Text, inputPrenom.Text, email, elo);
+
+            if (_joueurEnEdition == null) //si on remarque que la modification n'est pas enclenchée, on fait comme si on ajoutait un joueur de base
+            {
+                _gestionnaire.AjouterJoueur(inputNom.Text, inputPrenom.Text, email, elo);
+            }
+            else //sinon on modifie
+            {
+                _joueurEnEdition.Nom = inputNom.Text;
+                _joueurEnEdition.Prenom = inputPrenom.Text;
+                _joueurEnEdition.Email = email;
+                _joueurEnEdition.Elo = elo; //maj de l'affichage auto grâce à INotifyPropertyChanged
+
+                //qd on a fini on reset l'état en null
+                _joueurEnEdition = null;
+
+                //+ on reset aussi les textes
+    
+                //on remet le titre à "Nouveau"
+                var titre = this.FindControl<TextBlock>("TitreJoueur");
+                if (titre != null) titre.Text = "Nouveau Joueur";
+
+                //on remet le bouton à "Ajouter"
+                var boutonAjout = this.FindControl<Button>("TitreBoutonJoueur");
+                if (boutonAjout != null) boutonAjout.Content = "Ajouter Joueur";
+
+            }
 
             laListBox.ItemsSource = null; //obligé de redémarrer la source car ListBox va pas remarquer les changements
-            laListBox.ItemsSource = _gestionnaire.TousLesJoueurs; 
+            laListBox.ItemsSource = _gestionnaire.TousLesJoueurs;
 
             //on réinitialise les entrées
             inputNom.Text = "";
@@ -102,8 +130,24 @@ namespace ChessDB
             //on vérifie que qq chose est écrit avant d'ajouter
             if (string.IsNullOrWhiteSpace(inputNomTournoi.Text)) return;
 
-            //sert à ajouter le nom qu'on a écrit pour la compét
-            _gestionnaire.AjouterCompetition(inputNomTournoi.Text);
+            if (_tournoiEnEdition == null) //création tournoi
+            {
+                //sert à ajouter le nom qu'on a écrit pour la compét
+                _gestionnaire.AjouterCompetition(inputNomTournoi.Text);
+            }
+            else //modif tournoi
+            {
+                _tournoiEnEdition.Nom = inputNomTournoi.Text;
+
+                //reset de l'état + les textes
+                _tournoiEnEdition = null;
+
+                var titre = this.FindControl<TextBlock>("TitreTournoi");
+                if (titre != null) titre.Text = "Nouveau Tournoi";
+
+                var boutonAjout = this.FindControl<Button>("TitreBoutonTournoi");
+                if (boutonAjout != null) boutonAjout.Content = "Créer Compétition";
+            }
 
             //redémarrage de la source (comme pour BoutonJoueur)
             listeComps.ItemsSource = null;
@@ -258,9 +302,9 @@ namespace ChessDB
 
             //on affiche la zone d'arbitrage
             zoneDetails.IsVisible = true;
-            
-            //on remplit les infos
-            txtAffiche.Text = $"{match.Joueur1.Nom} VS {match.Joueur2.Nom}";
+
+            //commande qui servira à maj en direct les détails du match (pour afficher le bon titre dans le cas où on modifie le nom d'un joueur)
+            zoneDetails.DataContext = match;
             
             //pour ajouter les coups du match
             inputCoups.Text = match.Coups;
@@ -356,6 +400,50 @@ namespace ChessDB
 
                 //sinon on peut supprimer le joueur
                 _gestionnaire.TousLesJoueurs.Remove(joueurASupp);
+            }
+        }
+
+        public void BoutonEditerJoueur(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var bouton = (Avalonia.Controls.Button)sender;
+            var joueur = bouton.Tag as Models.Joueur;
+
+            if (joueur != null)
+            {
+                _joueurEnEdition = joueur; //pour dire qu'on modifie le joueur
+
+                this.FindControl<TextBox>("InputNom")!.Text = joueur.Nom; //on met des ! pour promettre que le findcontrol ne sera pas null
+                this.FindControl<TextBox>("InputPrenom")!.Text = joueur.Prenom;
+                this.FindControl<TextBox>("InputEmail")!.Text = joueur.Email;
+                this.FindControl<TextBox>("InputElo")!.Text = joueur.Elo.ToString();
+                
+                //on change le titre pour faire comprendre qu'on est en mode modification
+                var titre = this.FindControl<TextBlock>("TitreJoueur");
+                if (titre != null) titre.Text = "Éditer Joueur";
+
+                //la mm pour le bouton
+                var boutonAjout = this.FindControl<Button>("TitreBoutonJoueur");
+                if (boutonAjout != null) boutonAjout.Content = "Modifier Joueur";
+            }
+        }
+
+        //mm principe que pour BoutonEditerJoueur
+        public void BoutonEditerTournoi(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var bouton = (Avalonia.Controls.Button)sender;
+            var tournoi = bouton.Tag as Models.Competition;
+
+            if (tournoi != null)
+            {
+                _tournoiEnEdition = tournoi;
+                
+                this.FindControl<TextBox>("InputNomTournoi")!.Text = tournoi.Nom;
+
+                var titre = this.FindControl<TextBlock>("TitreTournoi");
+                if (titre != null) titre.Text = "Éditer Tournoi";
+
+                var boutonAjout = this.FindControl<Button>("TitreBoutonTournoi");
+                if (boutonAjout != null) boutonAjout.Content = "Modifier le tournoi";
             }
         }
     }

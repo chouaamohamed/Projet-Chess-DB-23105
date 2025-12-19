@@ -1,12 +1,26 @@
-using System.Collections.Generic; //pour utiliser les "List"
 using System.Collections.ObjectModel; //pour des listes qui se mettent à jour
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ChessDB.Models
 {
-    public class Competition
+    public class Competition : INotifyPropertyChanged //INotifyPropertyChanged = méthode qui notifie le système d'un chngmt (ici le nom du tournoi)
     {
         public int ID { get; set; }
-        public string Nom { get; set; }
+
+        private string _nom = ""; //le = "" c'est pour initaliser avec une chaine vide (au cas où VSC a peur qu'il y a rien comme valeur --> parano)
+        public string Nom //fonction mettant à jour le nom pour l'affichage (en cas de modif)
+        {
+            get { return _nom; }
+            set
+            {
+                if (_nom != value) //si la valeur est différente de ce qu'on a déjà
+                {
+                    _nom = value; //on enregistre la nouvelle valeur
+                    OnPropertyChanged(); //+ on lance l'alerte
+                }
+            }
+        }
         
         //liste des joueurs inscrits spécifiquement à CE tournoi
         public ObservableCollection<Joueur> JoueursInscrits { get; set; } //observablecollection sert à mettre à jour l'écran dès que y a un chgmt
@@ -51,6 +65,14 @@ namespace ChessDB.Models
                     compteurID++; //sert à avoir un ID pour les matchs (et pouvoir les différencier)
                 }
             }
+        }
+
+        //fonctions nécessaires pour implémenter les "notifications" à chaque modif du nom du tournoi
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }
