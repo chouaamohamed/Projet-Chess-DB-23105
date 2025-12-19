@@ -62,6 +62,8 @@ namespace ChessDB.Models
             }
         }
 
+        public Joueur() {} //constructeur vide pour la sauvegarde
+
         //constructeur = méthode spéciale appelée quand on crée un nouveau joueur
         public Joueur(int id, string nom, string prenom, string email, double elo)
         {

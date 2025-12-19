@@ -1,0 +1,65 @@
+{
+  "$id": "1",
+  "TousLesJoueurs": {
+    "$id": "2",
+    "$values": [
+      {
+        "$id": "3",
+        "ID": 1,
+        "Elo": 1000,
+        "Nom": "Chouaa",
+        "Prenom": "Mohamed",
+        "Email": "23105@ecam.be"
+      },
+      {
+        "$id": "4",
+        "ID": 2,
+        "Elo": 2840,
+        "Nom": "Magnus",
+        "Prenom": "Carlsen",
+        "Email": "connect.mc@horveikommunikasjon.no "
+      }
+    ]
+  },
+  "Competitions": {
+    "$id": "5",
+    "$values": [
+      {
+        "$id": "6",
+        "ID": 1,
+        "Nom": "World Chess Championship 2026",
+        "JoueursInscrits": {
+          "$id": "7",
+          "$values": [
+            {
+              "$ref": "4"
+            },
+            {
+              "$ref": "3"
+            }
+          ]
+        },
+        "Matchs": {
+          "$id": "8",
+          "$values": [
+            {
+              "$id": "9",
+              "ID": 1,
+              "Coups": "1. e4 d6\r\n2. d4 c5\r\n3. c3 Fe6\r\n4. Cf3 Ca6\r\n5. d5 Ch6\r\n6. dxe6 fxe6\r\n7. Fb5\u002B Rf7\r\n8. Cg5\u002B Rf6\r\n9. Df3\u002B Re5\r\n10. Df4#",
+              "GainEloJ1": 0,
+              "GainEloJ2": 0,
+              "Joueur1": {
+                "$ref": "4"
+              },
+              "Joueur2": {
+                "$ref": "3"
+              },
+              "Resultat": 1,
+              "ResultatAffiche": "Magnus Vainqueur"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

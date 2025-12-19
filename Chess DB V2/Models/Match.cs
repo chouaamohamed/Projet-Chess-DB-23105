@@ -18,7 +18,7 @@ namespace ChessDB.Models
         private Joueur _joueur1 = null!;
         private Joueur _joueur2 = null!;
 
-        public string Coups { get; set; }
+        public string Coups { get; set; } = "";
         
         private ResultatMatch _resultat;
 
@@ -64,6 +64,8 @@ namespace ChessDB.Models
                 }
             }
         }
+
+        public Match() { } //constructeur vide pour la sauvegarde
 
         public Match(int id, Joueur j1, Joueur j2)
         {

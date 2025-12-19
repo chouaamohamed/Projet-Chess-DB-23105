@@ -28,6 +28,13 @@ namespace ChessDB.Models
         //liste des matchs qui ont lieu durant ce tournoi
         public ObservableCollection<Match> Matchs { get; set; } //au final les "list" étaient une mauvaise idée pour accompagner une ui
 
+        public Competition() //constructeur vide pour la sauvegarde
+        {
+            //on initialise les listes pour éviter les crash (si le json est vide)
+            JoueursInscrits = new ObservableCollection<Joueur>();
+            Matchs = new ObservableCollection<Match>();
+        }
+
         public Competition(int id, string nom)
         {
             ID = id;

@@ -18,8 +18,8 @@ namespace ChessDB
         {
             InitializeComponent();
 
-            //on intialise gestionnaire
-            _gestionnaire = new Gestionnaire();
+            //on intialise gestionnaire (on utilise Sauvegarde car si jms un fichier est enregistré on chargera ce gestionnaire, mais si y a rien la fonction Sauvegarde se charge de créer un nouveau gestionnaire)
+            _gestionnaire = Services.Sauvegarde.Charger();
 
             var laListBox = this.FindControl<ListBox>("ListeJoueurs"); //cette ligne va chercher dans le fichier .axml un composant de type ListBox ayant comme nom "ListeJoueurs"
             
@@ -303,11 +303,8 @@ namespace ChessDB
             //on affiche la zone d'arbitrage
             zoneDetails.IsVisible = true;
 
-            //commande qui servira à maj en direct les détails du match (pour afficher le bon titre dans le cas où on modifie le nom d'un joueur)
+            //commande qui servira à maj en direct les détails du match (pour afficher le bon titre dans le cas où on modifie le nom d'un joueur +)
             zoneDetails.DataContext = match;
-            
-            //pour ajouter les coups du match
-            inputCoups.Text = match.Coups;
         }
 
         public void BoutonResultat(object sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -445,6 +442,13 @@ namespace ChessDB
                 var boutonAjout = this.FindControl<Button>("TitreBoutonTournoi");
                 if (boutonAjout != null) boutonAjout.Content = "Modifier le tournoi";
             }
+        }
+
+        //système de sauvegarde automatique quand on quitte l'application (Closing="Window_Closing" en axaml)
+        public void Window_Closing(object? sender, Avalonia.Controls.WindowClosingEventArgs e)
+        {
+            //qd on détecte que la fenêtre ferme, on active la fonction sauvegarde
+            Services.Sauvegarde.Sauvegarder(_gestionnaire);
         }
     }
 }

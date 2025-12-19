@@ -5,7 +5,8 @@
         xmlns:models="clr-namespace:ChessDB.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ChessDB.MainWindow"
-        Title="ChessDB">
+        Title="ChessDB"
+        Closing="Window_Closing">
 
     <DockPanel>
         <TextBlock Text="PO3L - ChessDB" 
@@ -246,7 +247,7 @@
                             <Separator/>
 
                             <TextBlock Text="Feuille de match (Coups) :" Margin="0,10,0,0"/>
-                            <TextBox x:Name="InputCoups" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Watermark="Ex : 1. e4 e5 &#x0a;2. Cf3..."/>
+                            <TextBox x:Name="InputCoups" x:DataType="models:Match" Text="{Binding Coups}" Height="150" AcceptsReturn="True" TextWrapping="Wrap" Watermark="Ex : 1. e4 e5 &#x0a;2. Cf3..."/>
 
                             <Separator/>
 
